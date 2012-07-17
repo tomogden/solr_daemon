@@ -1,0 +1,76 @@
+#!/etc/init.d/solr
+ # Source function library.
+ . /etc/init.d/functions
+
+
+start () {
+    echo -n $"Starting solr..."
+
+    # start daemon
+    #daemon --chdir='/usr/share/solr/example' --command "java -jar start.jar" --respawn --output=/var/log/solr.log --name=solr --verbose
+    cd /usr/share/solr/example
+    daemon java -jar start.jar > /var/log/solr.log
+    RETVAL=$?
+
+    if [ $RETVAL = 0 ]
+    then
+        echo "done."
+    else
+        echo "failed. See error code for more information."
+    fi
+    return $RETVAL
+}
+
+
+stop () {
+    echo -n $"Stopping solr..."
+
+    # stop daemon
+    #daemon --stop --name=solr  --verbose
+    kill `ps uax | grep -i "java -jar start.jar" | head -n 1 | awk '{print $2}'`
+    RETVAL=$?
+    
+    if [ $RETVAL = 0 ]
+    then
+        echo "done."
+    else
+        echo "failed. See error code for more information."
+    fi
+    return $RETVAL
+}
+
+
+restart() {
+    #daemon --restart --name=solr  --verbose
+    stop
+    start
+}
+
+
+status () {
+    # report on the status of the daemon
+    daemon --running --verbose --name=solr
+    return $?
+}
+
+
+case "$1" in
+    start)
+        start
+    ;;
+    status)
+        status
+    ;;
+    stop)
+        stop
+    ;;
+    restart)
+        restart
+    ;;
+    *)
+        echo $"Usage: solr {start|status|stop|restart}"
+        exit 3
+    ;;
+esac
+
+exit $RETVAL
