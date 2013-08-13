@@ -5,7 +5,9 @@ even if your server has to reboot. Since it exists as a service on the
 server, you can stop, start or restart it simply by:
 
   > service solr stop
+  
   > service solr start
+  
   > service solr restart
 
 
